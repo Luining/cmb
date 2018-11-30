@@ -8,10 +8,15 @@ import 'roboto-fontface/css/roboto/roboto-fontface.css';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import axios from 'axios';
 import cytoscape from 'cytoscape';
+//加载模块 VueResource(发送ajax请求)
+import VueResource from 'vue-resource'
+//将VueResource 注册vue
+Vue.use(VueResource);
+//设置请求根路径(服务器地址) ajax
+Vue.http.options.root = "http://127.0.0.1:3000/";
 
 Vue.prototype.$cy = cytoscape
-Vue.prototype.$http = axios
-// Vue.http.options.root = "http://127.0.0.1:3000/";
+Vue.prototype.$axios = axios
 
 
 Vue.config.productionTip = false;

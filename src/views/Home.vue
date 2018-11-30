@@ -12,10 +12,9 @@
     methods: {
       redirect ( url ) {
         this.$router.push( url );
-      }
-    },
-    mounted(){
-      var cy = this.$cy({
+      },
+      cytoscape(){
+        var cy = this.$cy({
         container: document.getElementById('cy'),
         autounselectify: true,
         style: [
@@ -37,43 +36,52 @@
         ],
         elements: this.$store.state.elems,
         layout: {
-              name: 'circle',
+              name: 'breadthfirst',
               directed: true,
               padding: 10
         }
-      });
-
-      cy.on('tap', 'node', function(){
-        if (this.connectedEdges().targets()[1].style("display") == "none"){
-          this.connectedEdges().targets().style("display", "element");
-          console.log(this.connectedEdges().targets())
-        } else {
-          this.successors().targets().style("display", "none");
-        }
-      });
-      
-      let localStor = JSON.parse(localStorage.getItem('posArr')) || []
-
-      cy.nodes().positions((node,i)=>{
-        for(let j=0; j<localStor.length; j++){
-          if(i === j){
-            return {
-              x:localStor[j].x,
-              y:localStor[j].y
-            }
-          }
-        };
-        !localStor.length && localStor.push(node.position())
-      });
-
-      cy.on('mouseup','node',function(evt){
-        var node = evt.target
-        localStor = []
-        cy.nodes().positions((node)=>{
-          localStor.push(node.position())
         });
-        localStorage.setItem('posArr',JSON.stringify(localStor))
-      });
+
+        cy.on('tap', 'node', function(){
+          if (this.connectedEdges().targets()[1].style("display") == "none"){
+            this.connectedEdges().targets().style("display", "element");
+            console.log(this.connectedEdges().targets())
+          } else {
+            this.successors().targets().style("display", "none");
+          }
+        });
+
+        let localStor = this.$store.state.localStor
+
+        cy.nodes().positions((node,i)=>{
+          for(let j=0; j<localStor.length; j++){
+            if(i === j){
+              return {
+                x:localStor[j].x,
+                y:localStor[j].y
+              }
+            }
+          };
+          !localStor.length && localStor.push(node.position())
+        });
+
+        cy.on('mouseup','node',function(evt){
+          var node = evt.target
+          localStor = []
+          cy.nodes().positions((node)=>{
+            localStor.push(node.position())
+          });
+          localStorage.setItem('posArr',JSON.stringify(localStor))
+        });
+      }
+    },
+    mounted(){
+      this.cytoscape()
+    },
+    conputed:{
+      slocalStor(){
+        return this.$store.state.localStor
+      }
     }
   }
 </script>

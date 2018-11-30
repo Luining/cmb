@@ -7,12 +7,10 @@ export default new Vuex.Store({
   state: {
     logged: false,
     drawer: false,
-    NetWorkData:{
-        "clusterInfo":['1','2'],
-        "nodes":[{ "id": "1", "name": "TCGA-CN-6022-01", "cluster": "2" }, { "id": "2", "name": "TCGA-CQ-5327-01", "cluster": "1" }],
-        "edges":[{ "id": "1_2", "source": "1", "target": "2", "edge_weight": "1" }, { "id": "1_2", "source": "1", "target": "2", "edge_weight": "1" },]
-    },
+    // localStor: [],
     localStor: JSON.parse(localStorage.getItem('posArr')) || [],
+    
+    // timelist:this.timelist,
     elems:{
       nodes: [
         {"SZ7FE01U10-OP1-N5K": {
@@ -307,6 +305,10 @@ export default new Vuex.Store({
     SET_LOGGED: (state, logged) => {
       state.logged = logged;
     },
+    SET_LOCALSTOR: (state, rposition) => {
+      state.localStor = rposition
+      this.$store.dispatch('setPosition')
+    }
   },
   actions: {
     setDrawer({ commit }, drawer) {
@@ -315,6 +317,17 @@ export default new Vuex.Store({
     toggleDrawer(state) {
       state.drawer = ! state.drawer;
     },
+    setPosition({ commit }, rposition) {
+      var url = `http://127.0.0.1:3000/rdataroll`;
+      this.$axios.get(url).then(result=>{
+        // if(result.data.code == 1){
+          var rposition = result.data.msg;
+          commit('SET_LOCALSTOR', rposition)
+        // }else{
+        //   Toast("获取数据失败");
+        // }
+      })
+    }
   },
   getters: {
     getDrawer: state => {
